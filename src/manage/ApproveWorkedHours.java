@@ -27,18 +27,21 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
     DefaultComboBoxModel model;
     int selectedProjectId;
     DefaultTableModel tableModel;
+    Calendar selectedWeekStartDate;
     
     public ApproveWorkedHours(JFrame  panelHolder, SystemData systemData) {
         this.panelHolder = panelHolder;
         this.systemData = systemData;  
         initComponents();   
         welcome.setText("Welcome "+ systemData.getCurrentUser().getEmployee().getName());
-        Calendar calendar = Calendar.getInstance();
+        selectedWeekStartDate = Calendar.getInstance();
+        selectedWeekStartDate.set(Calendar.DAY_OF_WEEK, 1);
+        Calendar calendar = (Calendar)selectedWeekStartDate.clone();
 	calendar.set(Calendar.DAY_OF_WEEK, 1);
         Date weekStartDate = new Date(calendar.getTimeInMillis());
         calendar.set(Calendar.DAY_OF_WEEK, 7);
         Date weekEndDate = new Date(calendar.getTimeInMillis());
-        jLabel10.setText("Approve Hours: From "+new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)
+        jLabel10.setText("Approve Worked Hours: From "+new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)
                 +" To "+new SimpleDateFormat("MM-dd-yyyy").format(weekEndDate));
         
         ConnectionManager cm = new ConnectionManager();
@@ -178,6 +181,8 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         projectSelection = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -232,7 +237,7 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectAll)
@@ -245,7 +250,7 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
         welcome.setText("Welcome Message");
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("Approve hours for  07/18/2016 to 07/22/2016");
+        jLabel10.setText("Approve Worked Hours:  From 08/07/2016 To 08/13/2016");
 
         approveButton.setText("Approve");
         approveButton.addActionListener(new java.awt.event.ActionListener() {
@@ -290,6 +295,20 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
                     .addComponent(projectSelection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
+        jButton1.setText("Previous Week");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Next Week");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -297,8 +316,12 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(welcome, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,7 +341,10 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(welcome, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -406,12 +432,12 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
 
     private void updateTable(){          
         welcome.setText("Welcome "+ systemData.getCurrentUser().getEmployee().getName());
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = (Calendar)selectedWeekStartDate.clone();
 	calendar.set(Calendar.DAY_OF_WEEK, 1);
         Date weekStartDate = new Date(calendar.getTimeInMillis());
         calendar.set(Calendar.DAY_OF_WEEK, 7);
         Date weekEndDate = new Date(calendar.getTimeInMillis());
-        jLabel10.setText("Approve Hours: From "+new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)
+        jLabel10.setText("Approve Worked Hours: From "+new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)
                 +" To "+new SimpleDateFormat("MM-dd-yyyy").format(weekEndDate));
         
         ConnectionManager cm = new ConnectionManager();
@@ -535,10 +561,22 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_uncheckAllActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        selectedWeekStartDate.add(Calendar.DAY_OF_WEEK, -7);
+        updateTable();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        selectedWeekStartDate.add(Calendar.DAY_OF_WEEK, 7);
+        updateTable();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton approveButton;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

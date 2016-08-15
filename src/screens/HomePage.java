@@ -18,6 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import invoice.GenerateInvoice;
+import invoice.SaveInvoice;
+import reports.EmployeeReport;
+import reports.ProjectReport;
+import reports.WorkedHoursReport;
 
 public class HomePage extends javax.swing.JPanel {
     JFrame  panelHolder;
@@ -116,10 +121,10 @@ public class HomePage extends javax.swing.JPanel {
         mntmGenerateInvoice.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                panelHolder.setTitle("Import Student");
-//                panelHolder.getContentPane().removeAll();
-//		panelHolder.getContentPane().add(new GenerateInvoice(panelHolder, systemData));
-//		panelHolder.getContentPane().revalidate();        
+                panelHolder.setTitle("Generate Invoice");
+                panelHolder.getContentPane().removeAll();
+		panelHolder.getContentPane().add(new GenerateInvoice(panelHolder, systemData));
+		panelHolder.getContentPane().revalidate();        
             }
         });
         
@@ -133,10 +138,10 @@ public class HomePage extends javax.swing.JPanel {
         mntmNewMenuItem_3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                panelHolder.setTitle("Save as PDF");
-//                panelHolder.getContentPane().removeAll();
-//		panelHolder.getContentPane().add(new SaveInvoice(panelHolder, systemData));
-//		panelHolder.getContentPane().revalidate();        
+                panelHolder.setTitle("View / Save Invoice");
+                panelHolder.getContentPane().removeAll();
+		panelHolder.getContentPane().add(new SaveInvoice(panelHolder, systemData));
+		panelHolder.getContentPane().revalidate();        
             }
         });                
         
@@ -147,10 +152,10 @@ public class HomePage extends javax.swing.JPanel {
         mntmGenerateSchedule.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                panelHolder.setTitle("Available Employees");
-//                panelHolder.getContentPane().removeAll();
-//		panelHolder.getContentPane().add(new AvailableEmployees(panelHolder, systemData));
-//		panelHolder.getContentPane().revalidate();        
+                panelHolder.setTitle("Available Employees");
+                panelHolder.getContentPane().removeAll();
+		panelHolder.getContentPane().add(new EmployeeReport(panelHolder, systemData));
+		panelHolder.getContentPane().revalidate();        
             }
         });
         JMenuItem mntmNewMenuItem = new JMenuItem("Worked Hours");
@@ -158,10 +163,10 @@ public class HomePage extends javax.swing.JPanel {
         mntmNewMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                panelHolder.setTitle("Hours Clocked");
-//                panelHolder.getContentPane().removeAll();
-//		panelHolder.getContentPane().add(new HoursClocked(panelHolder, systemData));
-//		panelHolder.getContentPane().revalidate();        
+                panelHolder.setTitle("Wprked Hours Report");
+                panelHolder.getContentPane().removeAll();
+		panelHolder.getContentPane().add(new WorkedHoursReport(panelHolder, systemData));
+		panelHolder.getContentPane().revalidate();        
             }
         });
         JMenuItem mntmProjectReport= new JMenuItem("Project Report");
@@ -169,10 +174,10 @@ public class HomePage extends javax.swing.JPanel {
         mntmProjectReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                panelHolder.setTitle("Project Report");
-//                panelHolder.getContentPane().removeAll();
-//		panelHolder.getContentPane().add(new ProjectReport(panelHolder, systemData));
-//		panelHolder.getContentPane().revalidate();        
+                panelHolder.setTitle("Project Report");
+                panelHolder.getContentPane().removeAll();
+		panelHolder.getContentPane().add(new ProjectReport(panelHolder, systemData));
+		panelHolder.getContentPane().revalidate();        
             }
         });
 
@@ -211,14 +216,14 @@ public class HomePage extends javax.swing.JPanel {
         menuBar.add(mnCurUser);
         
         if(!systemData.getCurrentUser().getEmployeeType().equals("Accountant") ){//user is not accountant
-            JMenuItem mntmClockHours = new JMenuItem("Clock Hours");
+            JMenuItem mntmClockHours = new JMenuItem("Clock Worked Hours");
             mnCurUser.add(mntmClockHours);
             mntmClockHours.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    panelHolder.setTitle("Clock Hours");
+                    panelHolder.setTitle("Clock Worked Hours");
                     panelHolder.getContentPane().removeAll();
-                    panelHolder.getContentPane().add(new ClockHours(panelHolder, systemData));
+                    panelHolder.getContentPane().add(new ClockWorkedHours(panelHolder, systemData));
                     panelHolder.getContentPane().revalidate();      
                 }
             }); 
@@ -258,7 +263,7 @@ public class HomePage extends javax.swing.JPanel {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
@@ -331,14 +336,14 @@ public class HomePage extends javax.swing.JPanel {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-    }// </editor-fold>                        
+    }// </editor-fold>//GEN-END:initComponents
 
 
-    // Variables declaration - do not modify                     
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel addressLine;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel name;
-    // End of variables declaration                   
+    // End of variables declaration//GEN-END:variables
 }

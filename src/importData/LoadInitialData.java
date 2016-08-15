@@ -12,7 +12,8 @@ public class LoadInitialData {
         new LoadClient("data/client_data.csv");
         new LoadEmployee("data/people_data.csv");
         new LoadProject("data/project_data.csv");   
-        new LoadProjectPerson("data/project_person.csv");    
+        new LoadProjectPerson("data/project_person.csv");  
+        new ComputeNextInvoiceDate();
     }
     
 }

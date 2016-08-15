@@ -9,6 +9,8 @@
     <class>entityClasses.ProjectPerson</class>
     <class>entityClasses.LoginCredentials</class>
     <class>entityClasses.WorkedHours</class>
+    <class>entityClasses.Invoice</class>
+    <class>entityClasses.InvoiceLineItem</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/invoice_generation_db"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

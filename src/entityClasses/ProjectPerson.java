@@ -117,7 +117,7 @@ public class ProjectPerson implements Serializable {
 
     @Override
     public String toString() {
-        return "entityClasses.ProjectPerson[ id=" + id + " ]";
+        return personName;
     }
     
 }
