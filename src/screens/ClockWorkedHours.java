@@ -14,6 +14,7 @@ import javax.persistence.Query;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class ClockWorkedHours extends javax.swing.JPanel {
@@ -30,13 +31,15 @@ public class ClockWorkedHours extends javax.swing.JPanel {
         initComponents();   
         welcome.setText("Welcome "+ systemData.getCurrentUser().getEmployee().getName());
         selectedWeekStartDate = Calendar.getInstance();
-        selectedWeekStartDate.set(Calendar.DAY_OF_WEEK, 1);
+        selectedWeekStartDate.set(Calendar.DAY_OF_WEEK, 2);
         
         Calendar calendar = (Calendar)selectedWeekStartDate.clone();
-	calendar.set(Calendar.DAY_OF_WEEK, 1);
+	calendar.set(Calendar.DAY_OF_WEEK, 2);
         Date weekStartDate = new Date(calendar.getTimeInMillis());
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        System.out.println("akjsks"+weekStartDate);
+        calendar.add(Calendar.DAY_OF_WEEK, 6);
         Date weekEndDate = new Date(calendar.getTimeInMillis());
+        System.out.println("akjsks"+weekEndDate);
         jLabel10.setText("Clock Hours for: "+
                 new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)+" to "+
                 new SimpleDateFormat("MM-dd-yyyy").format(weekEndDate));
@@ -49,7 +52,7 @@ public class ClockWorkedHours extends javax.swing.JPanel {
             columnNames[i] = new SimpleDateFormat("MM-dd-yyyy").format(date);
             dates.add(0, date);
             --i;
-            calendar.set(Calendar.DAY_OF_WEEK, i);           
+            calendar.add(Calendar.DAY_OF_WEEK, -1);           
         }
         
         ConnectionManager cm = new ConnectionManager();
@@ -101,7 +104,8 @@ public class ClockWorkedHours extends javax.swing.JPanel {
                 return !isApproved[row];
             }
          };
-        jTable1.setModel(tableModel);
+        jTable1 = new JTable(tableModel);
+        jScrollPane1.setViewportView(jTable1);
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(150);
         jTable1.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -328,10 +332,12 @@ public class ClockWorkedHours extends javax.swing.JPanel {
 
     private void refreshDisplay(){
         Calendar calendar = (Calendar)selectedWeekStartDate.clone();
-	calendar.set(Calendar.DAY_OF_WEEK, 1);
+	calendar.set(Calendar.DAY_OF_WEEK, 2);
         Date weekStartDate = new Date(calendar.getTimeInMillis());
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        System.out.println("akjsks"+weekStartDate);
+        calendar.add(Calendar.DAY_OF_WEEK, 6);
         Date weekEndDate = new Date(calendar.getTimeInMillis());
+        System.out.println("akjsks"+weekEndDate);
         jLabel10.setText("Clock Hours for: "+
                 new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)+" to "+
                 new SimpleDateFormat("MM-dd-yyyy").format(weekEndDate));
@@ -344,7 +350,7 @@ public class ClockWorkedHours extends javax.swing.JPanel {
             columnNames[i] = new SimpleDateFormat("MM-dd-yyyy").format(date);
             dates.add(0, date);
             --i;
-            calendar.set(Calendar.DAY_OF_WEEK, i);           
+            calendar.add(Calendar.DAY_OF_WEEK, -1);           
         }
         
         ConnectionManager cm = new ConnectionManager();
@@ -396,7 +402,8 @@ public class ClockWorkedHours extends javax.swing.JPanel {
                 return !isApproved[row];
             }
          };
-        jTable1.setModel(tableModel);
+        jTable1 = new JTable(tableModel);
+        jScrollPane1.setViewportView(jTable1);
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(150);
         jTable1.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {

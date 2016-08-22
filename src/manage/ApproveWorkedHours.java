@@ -35,11 +35,12 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
         initComponents();   
         welcome.setText("Welcome "+ systemData.getCurrentUser().getEmployee().getName());
         selectedWeekStartDate = Calendar.getInstance();
-        selectedWeekStartDate.set(Calendar.DAY_OF_WEEK, 1);
+        selectedWeekStartDate.set(Calendar.DAY_OF_WEEK, 2);
+        
         Calendar calendar = (Calendar)selectedWeekStartDate.clone();
-	calendar.set(Calendar.DAY_OF_WEEK, 1);
+	calendar.set(Calendar.DAY_OF_WEEK, 2);
         Date weekStartDate = new Date(calendar.getTimeInMillis());
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        calendar.add(Calendar.DAY_OF_WEEK, 6);
         Date weekEndDate = new Date(calendar.getTimeInMillis());
         jLabel10.setText("Approve Worked Hours: From "+new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)
                 +" To "+new SimpleDateFormat("MM-dd-yyyy").format(weekEndDate));
@@ -66,7 +67,7 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
             columnNames[i] = new SimpleDateFormat("MM-dd-yyyy").format(date);
             dates.add(0, date);
             --i;
-            calendar.set(Calendar.DAY_OF_WEEK, i);           
+            calendar.add(Calendar.DAY_OF_WEEK, -1);           
         }
         columnNames[8] = "Total Hours";
         columnNames[9] = "Select";
@@ -83,8 +84,7 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
             Date startDate = new Date(weekStartDate.getTime());
             Date endDate = new Date(weekEndDate.getTime());
             query = em.createQuery("Select wh from WorkedHours wh where wh.projectID= '"+selectedProjectId +"' "      
-                    //+ "and wh.isApproved = false "
-                    + "and wh.isInvoiced = false and wh.empName='"+developer+"'"  
+                    + " and wh.empName='"+developer+"'"  
                     + " and wh.date between '"+startDate+"' and '"+ endDate+"' order by wh.date");
             hoursList = query.getResultList();
             isApproved[i] = (hoursList==null || hoursList.isEmpty()? false: hoursList.get(0).isIsApproved());
@@ -433,9 +433,9 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
     private void updateTable(){          
         welcome.setText("Welcome "+ systemData.getCurrentUser().getEmployee().getName());
         Calendar calendar = (Calendar)selectedWeekStartDate.clone();
-	calendar.set(Calendar.DAY_OF_WEEK, 1);
+	calendar.set(Calendar.DAY_OF_WEEK, 2);
         Date weekStartDate = new Date(calendar.getTimeInMillis());
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
+        calendar.add(Calendar.DAY_OF_WEEK, 6);
         Date weekEndDate = new Date(calendar.getTimeInMillis());
         jLabel10.setText("Approve Worked Hours: From "+new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)
                 +" To "+new SimpleDateFormat("MM-dd-yyyy").format(weekEndDate));
@@ -452,7 +452,7 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
             columnNames[i] = new SimpleDateFormat("MM-dd-yyyy").format(date);
             dates.add(0, date);
             --i;
-            calendar.set(Calendar.DAY_OF_WEEK, i);           
+            calendar.add(Calendar.DAY_OF_WEEK, -1);           
         }columnNames[8] = "Total Hours";
         columnNames[9] = "Select";
         
@@ -467,11 +467,11 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
         for(String developer: developersList){
             Date startDate = new Date(weekStartDate.getTime());
             Date endDate = new Date(weekEndDate.getTime());
-            query = em.createQuery("Select wh from WorkedHours wh where wh.projectID= '"+selectedProjectId +"' "      
-                    //+ "and wh.isApproved = false "
-                    + "and wh.isInvoiced = false and wh.empName='"+developer+"'"  
+            query = em.createQuery("Select wh from WorkedHours wh where wh.projectID= '"+selectedProjectId +"' "   
+                    + " and wh.empName='"+developer+"'"  
                     + " and wh.date between '"+startDate+"' and '"+ endDate+"' order by wh.date");
             hoursList = query.getResultList();
+            System.out.println("vgvcgv"+hoursList);
             isApproved[i] = (hoursList==null || hoursList.isEmpty()? false: hoursList.get(0).isIsApproved());
             rowData[i][0] = developer;
             if(!hoursList.isEmpty()){
@@ -563,11 +563,13 @@ public class ApproveWorkedHours extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         selectedWeekStartDate.add(Calendar.DAY_OF_WEEK, -7);
+        buttonGroup1.clearSelection();
         updateTable();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         selectedWeekStartDate.add(Calendar.DAY_OF_WEEK, 7);
+        buttonGroup1.clearSelection();
         updateTable();
     }//GEN-LAST:event_jButton2ActionPerformed
 

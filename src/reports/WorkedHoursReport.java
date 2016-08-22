@@ -2,6 +2,7 @@ package reports;
 
 import screens.HomePage;
 import entityClasses.Employee;
+import entityClasses.InvoiceLineItem;
 import entityClasses.Project;
 import javax.persistence.EntityManager;
 import javax.swing.DefaultComboBoxModel;
@@ -23,65 +24,41 @@ public class WorkedHoursReport extends javax.swing.JPanel {
     JFrame  panelHolder;
     SystemData systemData;
     DefaultTableModel tableModel;
-    Calendar selectedWeekStartDate;
     
     public WorkedHoursReport(JFrame  panelHolder, SystemData systemData) {
         this.panelHolder = panelHolder;
         this.systemData = systemData;  
         initComponents();   
-        selectedWeekStartDate = Calendar.getInstance();
-        selectedWeekStartDate.set(Calendar.DAY_OF_WEEK, 1);
-        
-        Calendar calendar = (Calendar)selectedWeekStartDate.clone();
-	calendar.set(Calendar.DAY_OF_WEEK, 1);
-        Date weekStartDate = new Date(calendar.getTimeInMillis());
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
-        Date weekEndDate = new Date(calendar.getTimeInMillis());
-        jLabel10.setText("Worked Hours: From "+new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)
-                +" To "+new SimpleDateFormat("MM-dd-yyyy").format(weekEndDate));
+                
         
         ConnectionManager cm = new ConnectionManager();
         EntityManager em = cm.getEntityManager();
-        Date startDate = new Date(weekStartDate.getTime());
-        Date endDate = new Date(weekEndDate.getTime());
-        Query query = em.createQuery("Select wh from WorkedHours wh where " 
-            + " wh.date between '"+startDate+"' and '"+ endDate+"' order by wh.projectID, "
-                + "wh.empName, wh.date");
-        List<WorkedHours> hoursList = query.getResultList();
+        Query query = em.createQuery("Select ilItem from InvoiceLineItem ilItem "
+                + "ORDER BY ILITEM.description, ILITEM.projectID, ILITEM.startDate");        
+        List<InvoiceLineItem> lineItems = query.getResultList();
+        System.out.println(""+lineItems);
         
-        Object[] columnNames = new Object[10];
-        columnNames[0] ="Project Name";
-        columnNames[1] ="Employee";
-        columnNames[9] ="Total";
-        for (int i = 7; i >0; ) {
-            Date date = new Date(calendar.getTimeInMillis());
-            columnNames[i+1] = new SimpleDateFormat("MM-dd-yyyy").format(date);
-            --i;
-            calendar.set(Calendar.DAY_OF_WEEK, i);           
-        }
-        Object[][] rowData = new Object[hoursList.size()][10];  
+        Object[] columnNames = new Object[6];   
+        columnNames[0] ="Employee";
+        columnNames[1] ="Project";
+        columnNames[2] ="Date";
+        columnNames[3] ="Rate";
+        columnNames[4] ="Hours";
+        columnNames[5] ="Amount";     
+        Object[][] rowData = new Object[lineItems.size()][6];  
         int i=0;
-        int j =0;
-        int size = hoursList.size();
-        while(j< size){
-            rowData[i][0] = hoursList.get(i+0).getProject().getName();
-            rowData[i][1] = hoursList.get(i+0).getEmpName();
-            rowData[i][2] = hoursList.get(i+0).getHoursWorked();
-            rowData[i][3] = hoursList.get(i+1).getHoursWorked();
-            rowData[i][4] = hoursList.get(i+2).getHoursWorked();
-            rowData[i][5] = hoursList.get(i+3).getHoursWorked();
-            rowData[i][6] = hoursList.get(i+4).getHoursWorked();
-            rowData[i][7] = hoursList.get(i+5).getHoursWorked();
-            rowData[i][8] = hoursList.get(i+6).getHoursWorked();
-            int tot = hoursList.get(i+0).getHoursWorked()+  hoursList.get(i+1).getHoursWorked()
-                            + hoursList.get(i+2).getHoursWorked()+ hoursList.get(i+3).getHoursWorked()
-                            + hoursList.get(i+4).getHoursWorked()+ hoursList.get(i+5).getHoursWorked()
-                            + hoursList.get(i+6).getHoursWorked();
-
-            rowData[i][9] = tot;        
-            j = j+7;
+        double totalAmount = 0;
+        for(InvoiceLineItem lineItem : lineItems){
+            rowData[i][0] = lineItem.getDescription();
+            rowData[i][1] = lineItem.getProject().getName()+" ("+lineItem.getProject().getId()+")";
+            rowData[i][2] = lineItem.getStartDate()+" To "+ lineItem.getEndDate();
+            rowData[i][3] = "$"+lineItem.getBillRate();
+            rowData[i][4] = lineItem.getHours();
+            rowData[i][5] = "$"+lineItem.getTotal();
+            totalAmount = totalAmount + lineItem.getTotal();
             ++i;
         }
+        jLabel1.setText("$"+totalAmount);
         
         tableModel = new DefaultTableModel(rowData, columnNames){
             @Override
@@ -93,7 +70,12 @@ public class WorkedHoursReport extends javax.swing.JPanel {
         jTable1 = new JTable(tableModel);
         jScrollPane1.setViewportView(jTable1);
         jTable1.setRowHeight(25);
-        jTable1.getColumnModel().getColumn(0).setPreferredWidth(130);
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(85);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(130);
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(120);
+        jTable1.getColumnModel().getColumn(3).setPreferredWidth(25);
+        jTable1.getColumnModel().getColumn(4).setPreferredWidth(25);
+        jTable1.getColumnModel().getColumn(5).setPreferredWidth(50);
         cm.close();
         
     }
@@ -107,16 +89,14 @@ public class WorkedHoursReport extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         label1 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -136,6 +116,10 @@ public class WorkedHoursReport extends javax.swing.JPanel {
         jTable1.setRowHeight(25);
         jScrollPane1.setViewportView(jTable1);
 
+        jLabel1.setText("jLabel1");
+
+        jLabel2.setText("Total ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -144,20 +128,28 @@ public class WorkedHoursReport extends javax.swing.JPanel {
                 .addGap(5, 5, 5)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
                 .addGap(5, 5, 5))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addContainerGap())
         );
 
         label1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         label1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        label1.setText("Worked Hours Report");
-
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("Approve Worked Hours:  From 08/07/2016 To 08/13/2016");
+        label1.setText("Payroll Report");
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -166,33 +158,12 @@ public class WorkedHoursReport extends javax.swing.JPanel {
             }
         });
 
-        jButton1.setText("Previous Week");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Next Week");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(143, 143, 143)
-                .addComponent(jButton1)
-                .addGap(62, 62, 62)
-                .addComponent(jButton2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(label1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
@@ -200,7 +171,8 @@ public class WorkedHoursReport extends javax.swing.JPanel {
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(cancelButton)))))
+                                .addComponent(cancelButton)
+                                .addGap(8, 8, 8)))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -208,15 +180,9 @@ public class WorkedHoursReport extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addGap(3, 3, 3)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cancelButton)
                 .addContainerGap())
         );
@@ -232,7 +198,9 @@ public class WorkedHoursReport extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -243,88 +211,11 @@ public class WorkedHoursReport extends javax.swing.JPanel {
         panelHolder.getContentPane().revalidate();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void updateTable(){          
-        Calendar calendar = (Calendar)selectedWeekStartDate.clone();
-	calendar.set(Calendar.DAY_OF_WEEK, 1);
-        Date weekStartDate = new Date(calendar.getTimeInMillis());
-        calendar.set(Calendar.DAY_OF_WEEK, 7);
-        Date weekEndDate = new Date(calendar.getTimeInMillis());
-        jLabel10.setText("Worked Hours: From "+new SimpleDateFormat("MM-dd-yyyy").format(weekStartDate)
-                +" To "+new SimpleDateFormat("MM-dd-yyyy").format(weekEndDate));
-        
-        ConnectionManager cm = new ConnectionManager();
-        EntityManager em = cm.getEntityManager();
-        Date startDate = new Date(weekStartDate.getTime());
-        Date endDate = new Date(weekEndDate.getTime());
-        Query query = em.createQuery("Select wh from WorkedHours wh where " 
-            + " wh.date between '"+startDate+"' and '"+ endDate+"' order by wh.projectID, "
-                + "wh.empName, wh.date, wh.");
-        List<WorkedHours> hoursList = query.getResultList();
-        
-        Object[] columnNames = new Object[10];
-        columnNames[0] ="Project Name";
-        columnNames[1] ="Employee";
-        columnNames[9] ="Total";
-        for (int i = 7; i >0; ) {
-            Date date = new Date(calendar.getTimeInMillis());
-            columnNames[i+1] = new SimpleDateFormat("MM-dd-yyyy").format(date);
-            --i;
-            calendar.set(Calendar.DAY_OF_WEEK, i);           
-        }
-        Object[][] rowData = new Object[hoursList.size()][9];  
-        int i=0;
-        int j =0;
-        int size = hoursList.size();
-        while(j< size){
-            rowData[i][0] = hoursList.get(i+0).getProject().getName();
-            rowData[i][1] = hoursList.get(i+0).getEmpName();
-            rowData[i][2] = hoursList.get(i+0).getHoursWorked();
-            rowData[i][3] = hoursList.get(i+1).getHoursWorked();
-            rowData[i][4] = hoursList.get(i+2).getHoursWorked();
-            rowData[i][5] = hoursList.get(i+3).getHoursWorked();
-            rowData[i][6] = hoursList.get(i+4).getHoursWorked();
-            rowData[i][7] = hoursList.get(i+5).getHoursWorked();
-            rowData[i][8] = hoursList.get(i+6).getHoursWorked();
-            int tot = hoursList.get(i+0).getHoursWorked()+  hoursList.get(i+1).getHoursWorked()
-                            + hoursList.get(i+2).getHoursWorked()+ hoursList.get(i+3).getHoursWorked()
-                            + hoursList.get(i+4).getHoursWorked()+ hoursList.get(i+5).getHoursWorked()
-                            + hoursList.get(i+6).getHoursWorked();
-
-            rowData[i][9] = tot;        
-            j = j+7;
-            ++i;
-        }
-        
-        tableModel = new DefaultTableModel(rowData, columnNames){
-            @Override
-            public boolean isCellEditable(int row, int column) {                
-                    return false;
-            }
-         };
-        jTable1.setModel(tableModel);
-        jTable1 = new JTable(tableModel);
-        jScrollPane1.setViewportView(jTable1);
-        jTable1.setRowHeight(25);
-        jTable1.getColumnModel().getColumn(0).setPreferredWidth(130);
-        cm.close();
-    }
     
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        selectedWeekStartDate.add(Calendar.DAY_OF_WEEK, -7);
-        updateTable();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        selectedWeekStartDate.add(Calendar.DAY_OF_WEEK, 7);
-        updateTable();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

@@ -18,27 +18,22 @@ public class Invoice implements Serializable {
     private Date invoiceDate;    
     private Date invoiceStartDate;
     private Date invoiceEndDate;
-    private long totalAmountDue;
+    private double totalAmountDue;
     @ManyToOne
     private Client client;
     private Integer clientNumber;
-    @ManyToOne
-    private Project project;
-    private Integer projectId;
 
     public Invoice() {
     }
 
-    public Invoice( Date invoiceDate, Date invoiceStartDate, Date invoiceEndDate, long totalAmountDue, 
-            Client client, Integer clientNumber, Project project, Integer projectId) {        
+    public Invoice( Date invoiceDate, Date invoiceStartDate, Date invoiceEndDate, double totalAmountDue, 
+            Client client, Integer clientNumber) {        
         this.invoiceDate = invoiceDate;
         this.invoiceStartDate = invoiceStartDate;
         this.invoiceEndDate = invoiceEndDate;
         this.totalAmountDue = totalAmountDue;
         this.client = client;
-        this.clientNumber = clientNumber;
-        this.project = project;
-        this.projectId = projectId;
+        this.clientNumber = clientNumber;  
     }
     
     public Integer getId() {
@@ -57,11 +52,11 @@ public class Invoice implements Serializable {
         this.invoiceDate = invoiceDate;
     }
 
-    public long getTotalAmountDue() {
+    public double getTotalAmountDue() {
         return totalAmountDue;
     }
 
-    public void setTotalAmountDue(long totalAmountDue) {
+    public void setTotalAmountDue(double totalAmountDue) {
         this.totalAmountDue = totalAmountDue;
     }
 
@@ -79,22 +74,6 @@ public class Invoice implements Serializable {
 
     public void setClientNumber(Integer clientNumber) {
         this.clientNumber = clientNumber;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
     }
 
     public Date getInvoiceStartDate() {

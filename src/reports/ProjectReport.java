@@ -1,6 +1,5 @@
 package reports;
 
-import invoice.*;
 import entityClasses.Invoice;
 import entityClasses.InvoiceLineItem;
 import entityClasses.Project;
@@ -42,10 +41,10 @@ public class ProjectReport extends javax.swing.JPanel {
             rowData[i][4] =  project.getEndDate();
             rowData[i][5] =  project.getBudget();
             
-            query = em.createQuery("Select Sum(inv.totalAmountDue) from Invoice inv"
-                    + " where inv.projectId = '"+project.getId()+"'");
-            List<Long> utilBudgetList = query.getResultList();
-            long  utilizedBudget= (utilBudgetList==null || utilBudgetList.isEmpty() || utilBudgetList.get(0)==null)? 
+            query = em.createQuery("Select Sum(invLineItem.total) from InvoiceLineItem invLineItem"
+                    + " where invLineItem.projectID = '"+project.getId()+"'");
+            List<Double> utilBudgetList = query.getResultList();
+            double  utilizedBudget= (utilBudgetList==null || utilBudgetList.isEmpty() || utilBudgetList.get(0)==null)? 
                         0: utilBudgetList.get(0);
             rowData[i][6] =  utilizedBudget;
             ++i;                    
@@ -78,6 +77,7 @@ public class ProjectReport extends javax.swing.JPanel {
         jTable1 = new javax.swing.JTable();
         back = new javax.swing.JButton();
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Project Progress Report");
 

@@ -15,7 +15,7 @@ public class LogInPanel extends javax.swing.JPanel {
     
     public LogInPanel(JFrame  panelHolder) {
         this.panelHolder = panelHolder;
-        initComponents();       
+        initComponents();      
     }
    
     @SuppressWarnings("unchecked")

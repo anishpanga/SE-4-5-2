@@ -1,4 +1,4 @@
-package invoice;
+package reports;
 
 import entityClasses.Client;
 import entityClasses.Employee;
@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import importData.ConnectionManager;
 import entityClasses.ProjectPerson;
 import entityClasses.WorkedHours;
+import invoice.ViewInvoice;
 import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,7 +39,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.*;
 
 
-public class SaveInvoice extends javax.swing.JPanel {
+public class InvoiceReport extends javax.swing.JPanel {
     JFrame  panelHolder;
     SystemData systemData;
         
@@ -51,7 +52,7 @@ public class SaveInvoice extends javax.swing.JPanel {
     Date toDate;
     List<Invoice> invoiceList;
         
-    public SaveInvoice(JFrame  panelHolder, SystemData systemData) {
+    public InvoiceReport(JFrame  panelHolder, SystemData systemData) {
         this.panelHolder = panelHolder;
         this.systemData = systemData;  
         initComponents();
@@ -104,6 +105,7 @@ public class SaveInvoice extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         toComboBox = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -209,19 +211,27 @@ public class SaveInvoice extends javax.swing.JPanel {
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("Invoice Report");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
+                .addGap(12, 12, 12)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(61, Short.MAX_VALUE))
         );
@@ -231,8 +241,9 @@ public class SaveInvoice extends javax.swing.JPanel {
         ConnectionManager cm = new ConnectionManager();
         EntityManager em = cm.getEntityManager();
         
-        Query query = em.createQuery("Select inv from Invoice inv"
-        +" where inv.invoiceDate between '"+ fromDate+"' and '"+toDate+"'");
+        Query query = em.createQuery("Select inv from Invoice inv "
+                +" where inv.invoiceDate between '"+ fromDate+"' and '"+toDate+"'"
+                + " ORDER BY INV.clientNumber, inv.invoiceDate");
         invoiceList = query.getResultList();
         System.out.println("invoiceList"+invoiceList);
         if(invoiceList.isEmpty()){        
@@ -243,7 +254,7 @@ public class SaveInvoice extends javax.swing.JPanel {
             return;              
         }
         
-        Object[] columnNames = {"Project", "Client", "Invoice Number", "Invoice Date", "Invoice Amount"};
+        Object[] columnNames = {"Client", "Project", "Invoice Number", "Invoice Date", "Invoice Amount"};
         Object[][] rowData = new Object[invoiceList.size()][5]; 
         int i =0; 
         for (Invoice invoice : invoiceList) {
@@ -257,10 +268,10 @@ public class SaveInvoice extends javax.swing.JPanel {
             }
             projectNames = "<html>"+projectNames.substring(4)+"</html>";
             System.out.println("projectNames"+projectNames);
-            rowData[i][0] =  projectNames;
-            rowData[i][1] =  invoice.getClient().getName();
+            rowData[i][0] =  invoice.getClient().getName();
+            rowData[i][1] =  projectNames;
             rowData[i][2] =  invoice.getId();
-            rowData[i][3] =  invoice.getInvoiceDate();
+            rowData[i][3] =  invoice.getInvoiceStartDate()+ " To "+ invoice.getInvoiceEndDate();
             rowData[i][4] =  "$"+invoice.getTotalAmountDue();
             ++i;                    
         }          
@@ -286,7 +297,6 @@ public class SaveInvoice extends javax.swing.JPanel {
                 Component comp = jTable1.prepareRenderer(jTable1.getCellRenderer(row, column), row, column);
                 rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
             }
-
             jTable1.setRowHeight(row, rowHeight);
         }
         
@@ -301,7 +311,7 @@ public class SaveInvoice extends javax.swing.JPanel {
         Invoice selectedInvoice = invoiceList.get(jTable1.getSelectedRow());
         panelHolder.setTitle("View Invoice");
         panelHolder.getContentPane().removeAll();
-        panelHolder.getContentPane().add(new ViewInvoice(panelHolder, systemData, selectedInvoice, false ));
+        panelHolder.getContentPane().add(new ViewInvoice(panelHolder, systemData, selectedInvoice, true ));
         panelHolder.getContentPane().revalidate();
     }                                          
 
@@ -455,6 +465,7 @@ public class SaveInvoice extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
